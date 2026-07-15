@@ -1,54 +1,79 @@
 import { Link } from "react-router-dom";
 import {
   PlusCircle,
+  Wallet,
   Plane,
-  Heart,
   User,
+  Heart,
+  Users,
 } from "lucide-react";
 
 function QuickActions() {
+  const actions = [
+    {
+      title: "Create Trip",
+      icon: <Plane size={30} />,
+      color: "bg-blue-600",
+      link: "/create-trip",
+    },
+    {
+      title: "Add Expense",
+      icon: <Wallet size={30} />,
+      color: "bg-green-600",
+      link: "/add-expense",
+    },
+    {
+      title: "My Trips",
+      icon: <PlusCircle size={30} />,
+      color: "bg-purple-600",
+      link: "/trips",
+    },
+    {
+      title: "Profile",
+      icon: <User size={30} />,
+      color: "bg-orange-500",
+      link: "/profile",
+    },
+    {
+      title: "Wishlist",
+      icon: <Heart size={30} />,
+      color: "bg-pink-600",
+      link: "/favorites",
+    },
+    {
+      title: "Groups",
+      icon: <Users size={30} />,
+      color: "bg-cyan-600",
+      link: "/groups",
+    },
+  ];
+
   return (
-    <div className="grid md:grid-cols-4 gap-4 mb-10">
+    <div>
 
-      <Link
-        to="/create-trip"
-        className="bg-blue-600 text-white rounded-2xl p-6 hover:scale-105 duration-300"
-      >
-        <PlusCircle size={32} />
-        <h2 className="mt-3 font-bold">
-          Create Trip
-        </h2>
-      </Link>
+      <h2 className="text-2xl font-bold mb-6">
+        Quick Actions
+      </h2>
 
-      <Link
-        to="/ai-planner"
-        className="bg-purple-600 text-white rounded-2xl p-6 hover:scale-105 duration-300"
-      >
-        <Plane size={32} />
-        <h2 className="mt-3 font-bold">
-          AI Planner
-        </h2>
-      </Link>
+      <div className="grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-5">
 
-      <Link
-        to="/trips"
-        className="bg-pink-600 text-white rounded-2xl p-6 hover:scale-105 duration-300"
-      >
-        <Heart size={32} />
-        <h2 className="mt-3 font-bold">
-          Favorites
-        </h2>
-      </Link>
+        {actions.map((action) => (
+          <Link
+            key={action.title}
+            to={action.link}
+            className={`${action.color} rounded-2xl p-6 text-white hover:scale-105 transition`}
+          >
+            <div className="flex justify-center mb-4">
+              {action.icon}
+            </div>
 
-      <Link
-        to="/profile"
-        className="bg-green-600 text-white rounded-2xl p-6 hover:scale-105 duration-300"
-      >
-        <User size={32} />
-        <h2 className="mt-3 font-bold">
-          Profile
-        </h2>
-      </Link>
+            <h3 className="text-center font-semibold">
+              {action.title}
+            </h3>
+          </Link>
+        ))}
+
+      </div>
 
     </div>
   );

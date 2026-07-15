@@ -9,6 +9,7 @@ import {
 
 import { generateItinerary } from "../services/aiService";
 import { getCoordinates, getWeather } from "../services/weatherService";
+import { addFavorite, isFavorite, removeFavorite } from "../services/favoriteService";
 
 import MapView from "../components/MapView";
 
@@ -29,10 +30,28 @@ function TripDetails() {
   const [latitude, setLatitude] = useState(null);
 
   const [longitude, setLongitude] = useState(null);
+  const [favorite, setFavorite] = useState(false);
 
   useEffect(() => {
     loadTrip();
+    loadFavorite();
   }, []);
+
+  const loadFavorite = async () => {
+    const { data } = await isFavorite(id);
+    setFavorite(Boolean(data));
+  };
+
+  const handleFavorite = async () => {
+    const { error } = favorite ? await removeFavorite(id) : await addFavorite(id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setFavorite(!favorite);
+  };
 
   const loadTrip = async () => {
 
@@ -149,7 +168,7 @@ const handleDelete = async () => {
 
       <div className="text-center mt-20 text-2xl">
 
-        Loading...
+        Fetching trips
 
       </div>
 
@@ -384,6 +403,7 @@ const handleDelete = async () => {
             </button>
 
             <button
+              onClick={handleFavorite}
               className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl"
             >
               ❤️ Favorite

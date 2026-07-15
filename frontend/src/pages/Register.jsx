@@ -1,51 +1,78 @@
 import { useState } from "react";
-import { registerUser } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { signUp } from "../services/authService";
+import { registerUser } from "../services/authService";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-  const { error } = await signUp(email, password);
+    const { error } = await registerUser(
+      email,
+      password
+    );
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    if (error) {
+      alert(error.message);
+      return;
+    }
 
-  alert("Account created successfully");
-};
+    alert("Account created successfully.");
+
+    navigate("/login");
+  };
+
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 shadow rounded">
-      <h2 className="text-3xl font-bold mb-6">Register</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-      <form onSubmit={handleRegister} className="space-y-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-3 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-3 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button className="w-full bg-green-600 text-white p-3 rounded">
+        <h1 className="text-4xl font-bold mb-8 text-center">
           Register
-        </button>
+        </h1>
 
-      </form>
+        <form
+          onSubmit={handleRegister}
+          className="space-y-5"
+        >
+
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full border p-3 rounded-lg"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full border p-3 rounded-lg"
+            value={password}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg"
+          >
+            Register
+          </button>
+
+        </form>
+
+      </div>
+
     </div>
   );
 }
