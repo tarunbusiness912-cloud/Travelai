@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS public.groups (
   start_date DATE,
   end_date DATE,
   cover_image TEXT,
+  budget NUMERIC DEFAULT 0,
+  package_type TEXT NOT NULL DEFAULT 'squad',
+  status TEXT NOT NULL DEFAULT 'open',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -18,6 +21,9 @@ ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS destination TEXT;
 ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS start_date DATE;
 ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS end_date DATE;
 ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS cover_image TEXT;
+ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS budget NUMERIC DEFAULT 0;
+ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS package_type TEXT NOT NULL DEFAULT 'squad';
+ALTER TABLE public.groups ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'open';
 
 CREATE TABLE IF NOT EXISTS public.group_members (
   group_id UUID NOT NULL REFERENCES public.groups(id) ON DELETE CASCADE,

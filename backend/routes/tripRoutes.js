@@ -1,14 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-
 const {
-  getTrips,
+  getAllTrips,
+  getTripById,
   createTrip,
+  updateTrip,
   deleteTrip
-} = require("../controllers/tripController");
+} = require('../controllers/tripController');
 
-router.get("/", getTrips);
-router.post("/", createTrip);
-router.delete("/:id", deleteTrip);
+router.route('/')
+  .get(getAllTrips)
+  .post(createTrip);
+
+router.route('/:id')
+  .get(getTripById)
+  .put(updateTrip)
+  .delete(deleteTrip);
 
 module.exports = router;
