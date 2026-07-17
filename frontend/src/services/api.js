@@ -1,12 +1,51 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API = axios.create({
-  baseURL: "https://travelai-948u.onrender.com",
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-export const registerUser = (data) => API.post("/users/register", data);
-export const loginUser = (data) => API.post("/users/login", data);
+// Interceptor to inject bearer token headers seamlessly
+api.interceptors.request.use(
+  (config) => {
+    const storedUser = localStorage.getItem('travelai_user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      if (parsed.token) {
+        config.headers.Authorization = `Bearer ${parsed.token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-export const getTrips = () => API.get("/trips");
-export const createTrip = (data) => API.post("/trips", data);
-export const deleteTrip = (id) => API.delete(`/trips/${id}`);
+// Trip Endpoints
+export const getTrips = () => api.get('/trips');
+export const getTripById = (id) => api.get(`/trips/${id}`);
+export const createTrip = (tripData) => api.post('/trips', tripData);
+export const updateTrip = (id, tripData) => api.put(`/trips/${id}`, tripData);
+export const deleteTrip = (id) => api.delete(`/trips/${id}`);
+
+// Group Squad Endpoints
+export const getGroups = () => api.get('/groups');
+export const createGroup = (groupData) => api.post('/groups', groupData);
+export const updateGroup = (id, groupData) => api.put(`/groups/${id}`, groupData);
+export const deleteGroup = (id) => api.delete(`/groups/${id}`);
+export const requestToJoinGroup = (id) => api.post(`/groups/${id}/join`);
+
+// Profile Endpoints
+export const getProfileById = (id) => api.get(`/profiles/${id}`);
+export const updateProfileById = (id, profile) => api.put(`/profiles/${id}`, profile);
+
+// Expense Endpoints
+export const getExpenses = (tripId) => api.get(`/expenses?tripId=${tripId}`);
+export const addExpense = (expenseData) => api.post('/expenses', expenseData);
+
+export default api;

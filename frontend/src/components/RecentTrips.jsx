@@ -1,107 +1,65 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Map, Plus, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-import { getTrips } from "../services/tripService";
+export default function RecentTrips({ trips = [], loading = false }) {
+  const navigate = useNavigate();
 
-function RecentTrips() {
-
-  const [trips, setTrips] = useState([]);
-
-  useEffect(() => {
-
-    loadTrips();
-
-  }, []);
-
-  const loadTrips = async () => {
-
-    const { data } = await getTrips();
-
-    if (data) {
-
-      setTrips(data.slice(0,5));
-
-    }
-
-  };
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-slate-800">Recent Trips</h3>
+        <div className="h-48 bg-white border border-slate-100 rounded-2xl animate-pulse flex items-center justify-center text-slate-400">
+          Loading your active trips...
+        </div>
+      </div>
+    );
+  }
 
   return (
-
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-
-      <div className="flex justify-between items-center mb-6">
-
-        <h2 className="text-2xl font-bold">
-
-          Recent Trips
-
-        </h2>
-
-        <Link
-          to="/trips"
-          className="text-blue-600 font-semibold"
-        >
-
-          View All
-
-        </Link>
-
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Recent Trips</h3>
+        {trips.length > 0 && (
+          <button 
+            onClick={() => navigate('/trips')}
+            className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors"
+          >
+            View All <ArrowRight className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {trips.length === 0 ? (
-
-        <p className="text-gray-500">
-
-          No trips available
-
-        </p>
-
-      ) : (
-
-        <div className="space-y-4">
-
-          {trips.map((trip) => (
-
-            <Link
-              key={trip.id}
-              to={`/trip/${trip.id}`}
-              className="flex justify-between items-center border rounded-xl p-4 hover:bg-gray-100 transition"
-            >
-
-              <div>
-
-                <h3 className="font-bold">
-
-                  {trip.destination}
-
-                </h3>
-
-                <p className="text-gray-500 text-sm">
-
-                  {trip.start_date}
-
-                </p>
-
-              </div>
-
-              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-
-                View
-
-              </span>
-
-            </Link>
-
-          ))}
-
+        /* Onboarding Empty State Design */
+        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-8 md:p-12 text-center flex flex-col items-center justify-center max-w-xl mx-auto space-y-6 shadow-sm mt-4">
+          <div className="h-16 w-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 animate-bounce-slow">
+            <Map className="h-8 w-8" />
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-lg font-extrabold text-slate-900">No active trips found</h4>
+            <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
+              Let's start planning your next adventure! Your dynamic itinerary tracking, maps, and shared budget balances will populate here.
+            </p>
+          </div>
+          <button 
+            onClick={() => navigate('/trips/create')}
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-5 py-3 text-sm font-bold shadow-sm transition-all hover:shadow"
+          >
+            <Plus className="h-4 w-4" /> Start Planning Trip
+          </button>
         </div>
-
+      ) : (
+        /* Trip Cards Render Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {trips.map((trip) => (
+            <div key={trip.id} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+              <h4 className="font-bold text-slate-900">{trip.destination}</h4>
+              <p className="text-xs text-slate-500 mt-1">{trip.dates}</p>
+            </div>
+          ))}
+        </div>
       )}
-
     </div>
-
   );
-
 }
-
-export default RecentTrips;

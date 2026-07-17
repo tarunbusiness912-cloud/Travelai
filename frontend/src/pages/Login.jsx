@@ -1,107 +1,125 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/authService";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogIn, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setLoading(true);
-
-    const { error } = await loginUser(email, password);
-
-    setLoading(false);
-
-    if (error) {
-      alert(error.message);
+    if (!email || !password) {
+      setError('Please fill in all fields');
       return;
     }
 
-    alert("Login Successful");
+    setLoading(true);
+    setError('');
 
-    navigate("/dashboard");
+    try {
+      // Direct axios call pointing to your backend endpoint
+      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      
+      // Store user metadata and session token inside global Auth state
+      login(response.data);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Invalid email credentials or password');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Login
-        </h1>
-
-        <form
-          onSubmit={handleLogin}
-          className="space-y-5"
-        >
-
-          <input
-            type="email"
-            placeholder="Email Address"
-            className="w-full border rounded-lg p-3"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border rounded-lg p-3"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-            required
-          />
-
-          <div className="text-right">
-
-            <Link
-              to="/forgot-password"
-              className="text-blue-600 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-        </form>
-
-        <div className="text-center mt-6">
-
-          Don't have an account?{" "}
-
-          <Link
-            to="/register"
-            className="text-blue-600 hover:underline"
-          >
-            Register
-          </Link>
-
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans text-slate-900">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-4">
+        <div className="mx-auto h-12 w-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <Sparkles className="h-6 w-6 fill-white/20" />
         </div>
-
+        <h2 className="text-center text-3xl font-black tracking-tight text-slate-800">
+          Welcome back
+        </h2>
+        <p className="text-center text-sm font-semibold text-slate-500">
+          Access your optimized itineraries & trip workspaces
+        </p>
       </div>
 
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 border border-slate-100 shadow-sm sm:rounded-2xl sm:px-10 space-y-6">
+          
+          {error && (
+            <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-sm font-semibold">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-bold text-slate-700">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@domain.com"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-800 font-medium placeholder-slate-450 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-bold text-slate-700">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-800 font-medium placeholder-slate-450 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-150 hover:shadow-lg transition-all active:scale-95 cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="text-center pt-2">
+            <p className="text-sm font-medium text-slate-500">
+              Don't have an account?{' '}
+              <Link to="/register" className="font-bold text-indigo-600 hover:text-indigo-700">
+                Register here
+              </Link>
+            </p>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }
-
-export default Login;

@@ -1,4 +1,5 @@
-import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
@@ -33,10 +34,19 @@ function RedirectWithId({ destination }) {
   return <Navigate to={`${destination}/${id}`} replace />;
 }
 
-function AppRoutes() {
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+      >
+        <Routes location={location}>
         <Route path="/" element={<MainLayout><Home /></MainLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -46,6 +56,9 @@ function AppRoutes() {
         <Route path="/dashboard" element={<DashboardShell />}>
           <Route index element={<Dashboard />} />
           <Route path="trips" element={<Trips />} />
+          <Route path="trips/create" element={<CreateTrip />} />
+          <Route path="trips/:id" element={<TripDetails />} />
+          <Route path="trips/:id/edit" element={<EditTrip />} />
           <Route path="create-trip" element={<CreateTrip />} />
           <Route path="trip/:id" element={<TripDetails />} />
           <Route path="edit-trip/:id" element={<EditTrip />} />
@@ -62,6 +75,8 @@ function AppRoutes() {
         </Route>
 
         <Route path="/trips" element={<Navigate to="/dashboard/trips" replace />} />
+        <Route path="/trips/create" element={<Navigate to="/dashboard/trips/create" replace />} />
+        <Route path="/trips/:id" element={<RedirectWithId destination="/dashboard/trips" />} />
         <Route path="/create-trip" element={<Navigate to="/dashboard/create-trip" replace />} />
         <Route path="/trip/:id" element={<RedirectWithId destination="/dashboard/trip" />} />
         <Route path="/edit-trip/:id" element={<RedirectWithId destination="/dashboard/edit-trip" />} />
@@ -75,7 +90,16 @@ function AppRoutes() {
         <Route path="/create-group" element={<Navigate to="/dashboard/create-group" replace />} />
         <Route path="/favorites" element={<Navigate to="/dashboard/wishlist" replace />} />
         <Route path="*" element={<MainLayout><NotFound /></MainLayout>} />
-      </Routes>
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }

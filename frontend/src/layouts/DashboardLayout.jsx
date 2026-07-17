@@ -5,16 +5,13 @@ import TopNavbar from '../components/layouts/TopNavbar';
 
 const DashboardLayout = () => {
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
-      {/* Sidebar now pulled from the components/layouts folder */}
+    <div className="flex h-screen travelos-bg overflow-hidden text-slate-100">
       <Sidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navbar Header */}
         <TopNavbar userName="Explorer" />
-        
-        {/* Render space for routed paths */}
-        <main className="flex-1 overflow-y-auto p-6 sm:p-8 bg-slate-50/50">
+
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
           <Outlet />
         </main>
       </div>

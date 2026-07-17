@@ -1,71 +1,139 @@
-import { useEffect, useState } from "react";
-import { ArrowRight, Check, Compass, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { registerUser } from "../services/authService";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { UserPlus, User, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
-function Register() {
+export default function Register() {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (!authLoading && user) navigate("/dashboard", { replace: true });
-  }, [authLoading, navigate, user]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !email || !password) {
+      setError('Please fill in all input boxes');
+      return;
+    }
 
-  const handleRegister = async (event) => {
-    event.preventDefault();
     setLoading(true);
-    setMessage("");
+    setError('');
 
-    const { data, error } = await registerUser(email, password);
-    setLoading(false);
-
-    if (error) {
-      setMessage(error.message);
-      return;
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+      
+      // Auto-log user in upon registration success
+      login(response.data);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError(err.response?.data?.message || 'Account registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    if (data.session) {
-      navigate("/dashboard", { replace: true });
-      return;
-    }
-
-    setMessage("Your account is ready. Check your email to confirm it, then you’ll be redirected to sign in.");
-    window.setTimeout(() => navigate("/login", { replace: true }), 3500);
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#070b1a] px-5 py-8 text-white sm:p-10">
-      <div className="ambient-orb absolute -left-28 top-10 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-      <div className="ambient-orb absolute -right-20 bottom-0 h-[28rem] w-[28rem] rounded-full bg-fuchsia-500/15 blur-3xl [animation-delay:-4s]" />
-      <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/[.035] shadow-2xl shadow-black/30 lg:grid-cols-[.9fr_1.1fr]">
-        <aside className="hidden flex-col justify-between bg-gradient-to-br from-indigo-500/25 via-[#111a3a] to-cyan-500/15 p-10 lg:flex">
-          <Link to="/" className="flex items-center gap-2 font-semibold"><span className="grid h-9 w-9 place-items-center rounded-xl bg-cyan-300 text-slate-950"><Compass size={19} /></span>TravelAI</Link>
-          <div><div className="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-cyan-200"><Sparkles size={23} /></div><h1 className="text-4xl font-semibold leading-tight tracking-tight">Make room for the journeys that matter.</h1><p className="mt-5 max-w-sm leading-7 text-slate-300">One elegant workspace for inspiration, itineraries, and every shared decision.</p></div>
-          <div className="space-y-3 text-sm text-slate-300">{["Beautifully organized travel plans", "Private and secure by default", "Start planning in under a minute"].map((item) => <div key={item} className="flex items-center gap-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-cyan-300/15 text-cyan-200"><Check size={14} /></span>{item}</div>)}</div>
-        </aside>
-        <main className="flex items-center justify-center p-6 sm:p-12">
-          <div className="w-full max-w-md animate-rise">
-            <Link to="/" className="mb-12 flex items-center gap-2 font-semibold lg:hidden"><span className="grid h-9 w-9 place-items-center rounded-xl bg-cyan-300 text-slate-950"><Compass size={19} /></span>TravelAI</Link>
-            <div className="mb-8"><p className="text-sm font-medium text-cyan-300">CREATE YOUR SPACE</p><h2 className="mt-2 text-4xl font-semibold tracking-tight">Start your next story.</h2><p className="mt-3 text-slate-400">A calm place to turn travel dreams into real plans.</p></div>
-            <form onSubmit={handleRegister} className="space-y-5">
-              <label className="block text-sm font-medium text-slate-200">Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required className="mt-2 w-full rounded-xl border border-white/10 bg-white/[.06] px-4 py-3.5 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/70 focus:ring-4 focus:ring-cyan-300/10" /></label>
-              <label className="block text-sm font-medium text-slate-200">Password<div className="relative mt-2"><input type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" minLength="6" required className="w-full rounded-xl border border-white/10 bg-white/[.06] px-4 py-3.5 pr-12 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/70 focus:ring-4 focus:ring-cyan-300/10" /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 px-4 text-slate-400 transition hover:text-white" aria-label="Toggle password visibility">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label>
-              {message && <p className={`rounded-xl border px-4 py-3 text-sm ${message.includes("ready") ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-100" : "border-red-300/20 bg-red-300/10 text-red-100"}`}>{message}</p>}
-              <button disabled={loading} className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 font-semibold text-slate-950 transition duration-200 hover:-translate-y-0.5 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Creating your workspace..." : <>Create my workspace <ArrowRight size={18} className="transition group-hover:translate-x-1" /></>}</button>
-            </form>
-            <div className="mt-7 flex items-center gap-2 text-sm text-slate-400"><ShieldCheck size={16} className="text-cyan-300" /> Your travel plans stay private and secure.</div>
-            <p className="mt-8 text-center text-sm text-slate-400">Already have an account? <Link to="/login" className="font-semibold text-cyan-300 hover:text-cyan-100">Sign in</Link></p>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans text-slate-900">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-4">
+        <div className="mx-auto h-12 w-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <Sparkles className="h-6 w-6 fill-white/20" />
+        </div>
+        <h2 className="text-center text-3xl font-black tracking-tight text-slate-800">
+          Get started
+        </h2>
+        <p className="text-center text-sm font-semibold text-slate-500">
+          Unlock fully optimized trip planning and bill sharing features
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 border border-slate-100 shadow-sm sm:rounded-2xl sm:px-10 space-y-6">
+          
+          {error && (
+            <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-sm font-semibold">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-bold text-slate-700">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Jane Doe"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-800 font-medium placeholder-slate-450 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-bold text-slate-700">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@domain.com"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-800 font-medium placeholder-slate-450 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-bold text-slate-700">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Min. 6 characters"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-800 font-medium placeholder-slate-450 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-150 hover:shadow-lg transition-all active:scale-95 cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating account...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-4 w-4" />
+                  Sign Up
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="text-center pt-2">
+            <p className="text-sm font-medium text-slate-500">
+              Already registered?{' '}
+              <Link to="/login" className="font-bold text-indigo-600 hover:text-indigo-700">
+                Sign in here
+              </Link>
+            </p>
           </div>
-        </main>
+
+        </div>
       </div>
     </div>
   );
 }
-
-export default Register;

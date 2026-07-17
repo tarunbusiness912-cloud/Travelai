@@ -1,82 +1,64 @@
-import { Link } from "react-router-dom";
-import {
-  PlusCircle,
-  Wallet,
-  Plane,
-  User,
-  Heart,
-  Users,
-} from "lucide-react";
+import React from 'react';
+import { Plus, Receipt, Users, Compass } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-function QuickActions() {
+export default function QuickActions() {
+  const navigate = useNavigate();
+
   const actions = [
     {
-      title: "Create Trip",
-      icon: <Plane size={30} />,
-      color: "bg-blue-600",
-      link: "/create-trip",
+      label: 'New Trip',
+      icon: Plus,
+      path: '/trips/create',
+      bgClass: 'bg-indigo-50 hover:bg-indigo-100/80 border-indigo-100/80',
+      iconClass: 'bg-indigo-100 text-indigo-700',
+      textClass: 'text-indigo-950'
     },
     {
-      title: "Add Expense",
-      icon: <Wallet size={30} />,
-      color: "bg-green-600",
-      link: "/add-expense",
+      label: 'Add Expense',
+      icon: Receipt,
+      path: '/expenses/add',
+      bgClass: 'bg-purple-50 hover:bg-purple-100/80 border-purple-100/80',
+      iconClass: 'bg-purple-100 text-purple-700',
+      textClass: 'text-purple-950'
     },
     {
-      title: "My Trips",
-      icon: <PlusCircle size={30} />,
-      color: "bg-purple-600",
-      link: "/trips",
+      label: 'Group Split',
+      icon: Users,
+      path: '/groups/create',
+      bgClass: 'bg-violet-50 hover:bg-violet-100/80 border-violet-100/80',
+      iconClass: 'bg-violet-100 text-violet-700',
+      textClass: 'text-violet-950'
     },
     {
-      title: "Profile",
-      icon: <User size={30} />,
-      color: "bg-orange-500",
-      link: "/profile",
-    },
-    {
-      title: "Wishlist",
-      icon: <Heart size={30} />,
-      color: "bg-pink-600",
-      link: "/favorites",
-    },
-    {
-      title: "Groups",
-      icon: <Users size={30} />,
-      color: "bg-cyan-600",
-      link: "/groups",
-    },
+      label: 'Explore AI',
+      icon: Compass,
+      path: '/wishlist',
+      bgClass: 'bg-slate-50 hover:bg-slate-100 border-slate-200/80',
+      iconClass: 'bg-slate-200 text-slate-700',
+      textClass: 'text-slate-900'
+    }
   ];
 
   return (
-    <div>
-
-      <h2 className="text-2xl font-bold mb-6">
-        Quick Actions
-      </h2>
-
-      <div className="grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-5">
-
-        {actions.map((action) => (
-          <Link
-            key={action.title}
-            to={action.link}
-            className={`${action.color} rounded-2xl p-6 text-white hover:scale-105 transition`}
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold text-slate-800 tracking-tight">Quick Actions</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {actions.map((action, idx) => (
+          <button
+            key={idx}
+            onClick={() => navigate(action.path)}
+            className={`flex flex-col items-center justify-center p-5 rounded-2xl border transition-all duration-200 group ${action.bgClass}`}
           >
-            <div className="flex justify-center mb-4">
-              {action.icon}
+            <div className={`p-3 rounded-xl transition-transform duration-200 group-hover:scale-110 ${action.iconClass}`}>
+              <action.icon className="h-5 w-5" />
             </div>
-
-            <h3 className="text-center font-semibold">
-              {action.title}
-            </h3>
-          </Link>
+            <span className={`mt-3 text-sm font-bold tracking-wide ${action.textClass}`}>
+              {action.label}
+            </span>
+          </button>
         ))}
-
       </div>
-
     </div>
   );
 }
-
-export default QuickActions;
