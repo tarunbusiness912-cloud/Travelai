@@ -1,4 +1,3 @@
-import React from 'react';
 import { Plus, Receipt, Users, Compass } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +8,7 @@ export default function QuickActions() {
     {
       label: 'New Trip',
       icon: Plus,
-      path: '/trips/create',
+      path: '/dashboard/trips/create',
       bgClass: 'bg-indigo-50 hover:bg-indigo-100/80 border-indigo-100/80',
       iconClass: 'bg-indigo-100 text-indigo-700',
       textClass: 'text-indigo-950'
@@ -17,7 +16,7 @@ export default function QuickActions() {
     {
       label: 'Add Expense',
       icon: Receipt,
-      path: '/expenses/add',
+      path: '/dashboard/add-expense',
       bgClass: 'bg-purple-50 hover:bg-purple-100/80 border-purple-100/80',
       iconClass: 'bg-purple-100 text-purple-700',
       textClass: 'text-purple-950'
@@ -25,7 +24,7 @@ export default function QuickActions() {
     {
       label: 'Group Split',
       icon: Users,
-      path: '/groups/create',
+      path: '/dashboard/create-group',
       bgClass: 'bg-violet-50 hover:bg-violet-100/80 border-violet-100/80',
       iconClass: 'bg-violet-100 text-violet-700',
       textClass: 'text-violet-950'
@@ -33,7 +32,7 @@ export default function QuickActions() {
     {
       label: 'Explore AI',
       icon: Compass,
-      path: '/wishlist',
+      path: '/dashboard/budget',
       bgClass: 'bg-slate-50 hover:bg-slate-100 border-slate-200/80',
       iconClass: 'bg-slate-200 text-slate-700',
       textClass: 'text-slate-900'

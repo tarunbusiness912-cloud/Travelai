@@ -53,7 +53,8 @@ const mapGroup = (group) => ({
 
 router.get('/', async (_req, res) => {
   try {
-    const { data, error } = await supabase
+    const db = _req.supabase || supabase;
+    const { data, error } = await db
       .from('groups')
       .select('*')
       .order('created_at', { ascending: false });
@@ -67,8 +68,9 @@ router.get('/', async (_req, res) => {
 
 router.post('/', async (req, res) => {
   try {
+    const db = req.supabase || supabase;
     const payload = {
-      owner_id: req.body.ownerId || req.body.owner_id || null,
+      owner_id: req.body.ownerId || req.body.owner_id || req.authUser?.id || null,
       name: req.body.name?.trim(),
       description: req.body.description?.trim() || null,
       destination: req.body.destination?.trim() || null,
@@ -82,13 +84,22 @@ router.post('/', async (req, res) => {
 
     if (!payload.name) return res.status(400).json({ error: 'Group name is required' });
 
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('groups')
       .insert([payload])
       .select()
       .single();
 
     if (error) throw error;
+
+    if (req.authUser) {
+      await db.from('group_members').insert([{
+        group_id: data.id,
+        user_id: req.authUser.id,
+        role: 'owner'
+      }]);
+    }
+
     res.status(201).json(mapGroup(data));
   } catch (error) {
     res.status(400).json({ error: error.message || 'Unable to create group' });
@@ -97,6 +108,7 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
+    const db = req.supabase || supabase;
     const payload = {
       name: req.body.name?.trim(),
       description: req.body.description?.trim(),
@@ -109,12 +121,13 @@ router.put('/:id', async (req, res) => {
     };
     Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
 
-    const { data, error } = await supabase
+    let query = db
       .from('groups')
       .update(payload)
-      .eq('id', req.params.id)
-      .select()
-      .single();
+      .eq('id', req.params.id);
+
+    if (req.authUser) query = query.eq('owner_id', req.authUser.id);
+    const { data, error } = await query.select().single();
 
     if (error) throw error;
     res.json(mapGroup(data));
@@ -125,7 +138,10 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const { error } = await supabase.from('groups').delete().eq('id', req.params.id);
+    const db = req.supabase || supabase;
+    let query = db.from('groups').delete().eq('id', req.params.id);
+    if (req.authUser) query = query.eq('owner_id', req.authUser.id);
+    const { error } = await query;
     if (error) throw error;
     res.status(204).send();
   } catch (error) {

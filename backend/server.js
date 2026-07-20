@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const supabase = require('./config/supabase');
 require('dotenv').config();
 
 const app = express(); // 1. Create the app first
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:5173',
+  'https://travelai-navy.vercel.app',
   process.env.FRONTEND_URL,
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
 ].filter(Boolean);
@@ -13,7 +15,9 @@ const allowedOrigins = [
 // 2. Middleware
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    const isVercelPreview = origin && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+    if (!origin || allowedOrigins.includes(origin) || isVercelPreview) {
       callback(null, true);
       return;
     }
@@ -23,6 +27,17 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use(async (req, _res, next) => {
+  req.supabase = supabase.forRequest(req);
+
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+  if (token) {
+    const { data } = await supabase.auth.getUser(token);
+    req.authUser = data?.user || null;
+  }
+
+  next();
+});
 
 // 3. Routes
 app.use('/api/auth', require('./routes/auth')); // 👈 Added this line to hook up registration and login!

@@ -31,10 +31,15 @@ const tripPayload = (body) => ({
 
 exports.getAllTrips = async (_req, res) => {
   try {
-    const { data, error } = await supabase
+    const db = _req.supabase || supabase;
+    const query = db
       .from('trips')
       .select('*')
       .order('created_at', { ascending: false });
+
+    const { data, error } = _req.authUser
+      ? await query.eq('user_id', _req.authUser.id)
+      : await query;
 
     if (error) return res.status(400).json({ error: error.message });
     res.status(200).json((data || []).map(mapTrip));
@@ -45,11 +50,14 @@ exports.getAllTrips = async (_req, res) => {
 
 exports.getTripById = async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const db = req.supabase || supabase;
+    let query = db
       .from('trips')
       .select('*')
-      .eq('id', req.params.id)
-      .single();
+      .eq('id', req.params.id);
+
+    if (req.authUser) query = query.eq('user_id', req.authUser.id);
+    const { data, error } = await query.single();
 
     if (error) {
       if (error.code === 'PGRST116') return res.status(404).json({ error: 'Trip not found' });
@@ -64,10 +72,12 @@ exports.getTripById = async (req, res) => {
 
 exports.createTrip = async (req, res) => {
   try {
+    const db = req.supabase || supabase;
     const payload = tripPayload(req.body);
     if (!payload.destination) return res.status(400).json({ error: 'Destination is required' });
+    if (req.authUser) payload.user_id = req.authUser.id;
 
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('trips')
       .insert([payload])
       .select()
@@ -82,16 +92,18 @@ exports.createTrip = async (req, res) => {
 
 exports.updateTrip = async (req, res) => {
   try {
+    const db = req.supabase || supabase;
     const payload = tripPayload(req.body);
     Object.keys(payload).forEach((key) => payload[key] === null && delete payload[key]);
     if (!payload.destination) delete payload.destination;
 
-    const { data, error } = await supabase
+    let query = db
       .from('trips')
       .update(payload)
-      .eq('id', req.params.id)
-      .select()
-      .single();
+      .eq('id', req.params.id);
+
+    if (req.authUser) query = query.eq('user_id', req.authUser.id);
+    const { data, error } = await query.select().single();
 
     if (error) return res.status(400).json({ error: error.message });
     res.status(200).json(mapTrip(data));
@@ -102,10 +114,14 @@ exports.updateTrip = async (req, res) => {
 
 exports.deleteTrip = async (req, res) => {
   try {
-    const { error } = await supabase
+    const db = req.supabase || supabase;
+    let query = db
       .from('trips')
       .delete()
       .eq('id', req.params.id);
+
+    if (req.authUser) query = query.eq('user_id', req.authUser.id);
+    const { error } = await query;
 
     if (error) return res.status(400).json({ error: error.message });
     res.status(204).send();

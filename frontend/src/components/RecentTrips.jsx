@@ -1,4 +1,3 @@
-import React from 'react';
 import { Map, Plus, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +21,7 @@ export default function RecentTrips({ trips = [], loading = false }) {
         <h3 className="text-lg font-bold text-slate-800 tracking-tight">Recent Trips</h3>
         {trips.length > 0 && (
           <button 
-            onClick={() => navigate('/trips')}
+            onClick={() => navigate('/dashboard/trips')}
             className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors"
           >
             View All <ArrowRight className="h-4 w-4" />
@@ -43,7 +42,7 @@ export default function RecentTrips({ trips = [], loading = false }) {
             </p>
           </div>
           <button 
-            onClick={() => navigate('/trips/create')}
+            onClick={() => navigate('/dashboard/trips/create')}
             className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-5 py-3 text-sm font-bold shadow-sm transition-all hover:shadow"
           >
             <Plus className="h-4 w-4" /> Start Planning Trip

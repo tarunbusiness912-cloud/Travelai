@@ -30,7 +30,7 @@ export default function GroupDetails() {
       
       {/* Back Button */}
       <button 
-        onClick={() => navigate('/groups')}
+        onClick={() => navigate('/dashboard/groups')}
         className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" /> Back to Groups
@@ -43,7 +43,7 @@ export default function GroupDetails() {
           <p className="text-sm text-slate-500 mt-1">Real-time splitwise calculations for your Mysuru Getaway trip.</p>
         </div>
         <button 
-          onClick={() => navigate('/expenses/add')}
+          onClick={() => navigate('/dashboard/add-expense')}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 text-sm font-bold shadow-sm transition-all hover:shadow cursor-pointer"
         >
           <Plus className="h-4 w-4" /> Log Group Expense

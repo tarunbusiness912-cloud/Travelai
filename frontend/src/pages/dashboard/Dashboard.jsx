@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Compass, 
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
           <div className="pt-2">
             <button 
-              onClick={() => navigate('/trips/create')}
+              onClick={() => navigate('/dashboard/trips/create')}
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-950 px-6 py-3.5 text-sm font-extrabold shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Sparkles className="h-4 w-4 text-indigo-600 fill-indigo-600" /> Plan a New Trip with AI
@@ -124,7 +124,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Recent Trips</h2>
             <button 
-              onClick={() => navigate('/trips')}
+              onClick={() => navigate('/dashboard/trips')}
               className="inline-flex items-center gap-1 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
             >
               See all <ArrowRight className="h-4 w-4" />
@@ -152,7 +152,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <button 
-                onClick={() => navigate('/trips/create')}
+                onClick={() => navigate('/dashboard/trips/create')}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 text-sm font-bold shadow-md shadow-indigo-100 transition-all cursor-pointer"
               >
                 Plan My First Trip
@@ -164,7 +164,7 @@ export default function Dashboard() {
               {trips.map((trip) => (
                 <div 
                   key={trip.id}
-                  onClick={() => navigate(`/trips/${trip.id}`)}
+                  onClick={() => navigate(`/dashboard/trips/${trip.id}`)}
                   className="group bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all cursor-pointer flex flex-col justify-between space-y-6"
                 >
                   <div className="space-y-2">
@@ -196,19 +196,19 @@ export default function Dashboard() {
                 label: 'Record Expense', 
                 desc: 'Log a dynamic individual or split payment.', 
                 icon: Receipt, 
-                path: '/expenses/add' 
+                path: '/dashboard/add-expense' 
               },
               { 
                 label: 'Create Billing Group', 
                 desc: 'Group together with trip members.', 
                 icon: Users, 
-                path: '/groups/create' 
+                path: '/dashboard/create-group' 
               },
               { 
                 label: 'Settlements Sheet', 
                 desc: 'View real-time outstanding balances.', 
                 icon: TrendingUp, 
-                path: '/groups' 
+                path: '/dashboard/groups' 
               }
             ].map((action, index) => (
               <button

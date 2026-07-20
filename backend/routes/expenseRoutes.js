@@ -5,6 +5,9 @@ const { getExpensesByTrip, createExpense } = require('../controllers/expenseCont
 // This handles POST /api/expenses/
 router.post('/', createExpense);
 
+// This handles GET /api/expenses?tripId=...
+router.get('/', getExpensesByTrip);
+
 // This handles GET /api/expenses/:tripId
 router.get('/:tripId', getExpensesByTrip);
 

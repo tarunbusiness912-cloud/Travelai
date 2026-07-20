@@ -18,4 +18,12 @@ if (!supabaseUrl || !supabaseKey) {
 // Instantiate the Supabase Client
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+supabase.forRequest = (req) => createClient(supabaseUrl, supabaseKey, {
+  global: {
+    headers: {
+      Authorization: req.headers.authorization || '',
+    },
+  },
+});
+
 module.exports = supabase;

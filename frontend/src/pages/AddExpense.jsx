@@ -85,7 +85,7 @@ export default function AddExpense() {
       
       // Navigate back to the corresponding trip workspace after a brief delay
       setTimeout(() => {
-        navigate(`/trip/${formData.tripId}`);
+        navigate(`/dashboard/trips/${formData.tripId}`);
       }, 1500);
     } catch (err) {
       console.error('Failed to save expense:', err);

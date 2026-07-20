@@ -6,13 +6,18 @@ const destinations = [
   { name: 'Hampi', fit: 'heritage, solo backpacking, hostel-friendly', base: 4800 },
   { name: 'Gokarna', fit: 'beach trek, dorm stays, overnight bus access', base: 5000 },
   { name: 'Pondicherry', fit: 'cafes, walkable quarters, budget homestays', base: 6200 },
-  { name: 'Ooty', fit: 'cool weather, toy train, budget lodges', base: 5800 }
+  { name: 'Ooty', fit: 'cool weather, toy train, budget lodges', base: 5800 },
+  { name: 'Jaipur', fit: 'forts, markets, family-friendly food trails', base: 7000 },
+  { name: 'Rishikesh', fit: 'rafting, hostels, cafes, weekend trains', base: 5400 },
+  { name: 'Munnar', fit: 'tea estates, calm stays, scenic local cabs', base: 7600 },
+  { name: 'Varanasi', fit: 'ghats, temples, street food, culture walks', base: 5200 }
 ];
 
 export default function BudgetPlanner() {
   const [prompt, setPrompt] = useState('I have 3 days holiday and I am alone with 5k. Suggest a trip.');
   const parsed = useMemo(() => parseTravelPrompt(prompt), [prompt]);
-  const recommendation = useMemo(() => chooseDestination(parsed), [parsed]);
+  const recommendations = useMemo(() => chooseDestinations(parsed), [parsed]);
+  const recommendation = recommendations[0];
   const costs = useMemo(() => buildCostPlan(parsed.budget), [parsed.budget]);
 
   return (
@@ -39,9 +44,9 @@ export default function BudgetPlanner() {
               placeholder="Example: I have 3 days holiday and I am alone with 5k. Suggest a trip."
             />
           </label>
-          <button className="mt-4 inline-flex items-center gap-2 rounded-xl bg-amber-200 px-5 py-3 text-sm font-black text-slate-950">
+          <button className="mt-4 inline-flex items-center gap-2 rounded-xl bg-amber-200 px-5 py-3 text-sm font-black text-slate-950 shadow-lg shadow-amber-950/20">
             <Send className="h-4 w-4" />
-            Parsed live
+            Generate India plan
           </button>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -89,6 +94,22 @@ export default function BudgetPlanner() {
               Day 1 overnight train/bus arrival, hostel check-in, local breakfast. Day 2 core sights plus low-cost local transport. Day 3 sunrise stop, market meal, return sleeper.
             </p>
           </div>
+
+          <div className="mt-6">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-100">More good matches</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {recommendations.slice(1).map((item) => (
+                <div key={item.name} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-black text-white">{item.name}</p>
+                    <span className="rounded-full bg-emerald-300/15 px-2 py-1 text-[11px] font-black text-emerald-100">{item.score}%</span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">{item.fit}</p>
+                  <p className="mt-3 text-sm font-black text-amber-100">From Rs {item.base.toLocaleString('en-IN')}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.section>
       </div>
     </div>
@@ -114,14 +135,14 @@ function parseTravelPrompt(text) {
   };
 }
 
-function chooseDestination(parsed) {
-  const scored = destinations
+function chooseDestinations(parsed) {
+  return destinations
     .map((destination) => ({
       ...destination,
-      score: Math.max(68, Math.min(98, 100 - Math.abs(destination.base - parsed.budget) / 130))
+      score: Math.round(Math.max(68, Math.min(98, 100 - Math.abs(destination.base - parsed.budget) / 130)))
     }))
-    .sort((a, b) => b.score - a.score);
-  return { ...scored[0], score: Math.round(scored[0].score) };
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
 }
 
 function buildCostPlan(budget) {

@@ -2,8 +2,14 @@ const supabase = require('../config/supabase');
 
 exports.getExpensesByTrip = async (req, res) => {
   try {
-    const { tripId } = req.params;
-    const { data, error } = await supabase
+    const db = req.supabase || supabase;
+    const tripId = req.params.tripId || req.query.tripId;
+
+    if (!tripId) {
+      return res.status(400).json({ message: 'tripId is required' });
+    }
+
+    const { data, error } = await db
       .from('expenses')
       .select('*')
       .eq('trip_id', tripId)
@@ -18,11 +24,18 @@ exports.getExpensesByTrip = async (req, res) => {
 
 exports.createExpense = async (req, res) => {
   try {
-    const { tripId, title, amount, paidBy, splitBetween } = req.body;
+    const db = req.supabase || supabase;
+    const { tripId, title, amount, splitBetween } = req.body;
+    const paidBy = req.body.paidBy || req.body.paid_by;
+    const category = req.body.category || 'Others';
 
-    const { data: expenseData, error: expenseError } = await supabase
+    if (!tripId || !title || !amount || !paidBy) {
+      return res.status(400).json({ message: 'Trip, title, amount, and payer are required' });
+    }
+
+    const { data: expenseData, error: expenseError } = await db
       .from('expenses')
-      .insert([{ trip_id: tripId, title, amount: parseFloat(amount), paid_by: paidBy }])
+      .insert([{ trip_id: tripId, title, amount: parseFloat(amount), paid_by: paidBy, category }])
       .select();
 
     if (expenseError) throw expenseError;
@@ -37,7 +50,7 @@ exports.createExpense = async (req, res) => {
         is_paid: false
       }));
 
-      const { error: splitError } = await supabase
+      const { error: splitError } = await db
         .from('expense_splits')
         .insert(splitRecords);
 
