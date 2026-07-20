@@ -4,9 +4,24 @@ require('dotenv').config();
 
 const app = express(); // 1. Create the app first
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+].filter(Boolean);
 
 // 2. Middleware
-app.use(cors({ origin: 'http://localhost:5173' })); 
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // 3. Routes

@@ -1,47 +1,197 @@
-import { ArrowRight, CalendarDays, Compass, MapPin, Sparkles, WalletCards } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Compass,
+  IndianRupee,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  TrainFront,
+  Users,
+  WalletCards,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
-const features = [
-  { icon: Sparkles, title: "AI trip design", text: "Shape a thoughtful itinerary from a simple idea." },
-  { icon: WalletCards, title: "Shared budgets", text: "Keep every payment and plan delightfully clear." },
-  { icon: CalendarDays, title: "One calm timeline", text: "Flights, stays and experiences, beautifully together." },
+const destinationImage =
+  "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=80";
+
+const routes = [
+  "Delhi to Agra weekend",
+  "Mumbai to Goa beach break",
+  "Bengaluru to Coorg hills",
+  "Jaipur to Udaipur culture trip",
+];
+
+const benefits = [
+  {
+    icon: Sparkles,
+    title: "AI plans for Indian routes",
+    text: "Create day-wise ideas for beaches, hills, temples, forts, food streets, and city breaks inside India.",
+  },
+  {
+    icon: WalletCards,
+    title: "Budget clarity in rupees",
+    text: "Plan stays, food, transport, activities, and shared costs without losing track of who paid what.",
+  },
+  {
+    icon: Users,
+    title: "Easy group coordination",
+    text: "Keep friends and family on the same page with trips, groups, expenses, and wishlisted places.",
+  },
+];
+
+const steps = [
+  "Choose an Indian destination and trip dates.",
+  "Add your budget, group members, and must-visit places.",
+  "Use the dashboard to manage itinerary, expenses, wishlist, and planner.",
 ];
 
 function Home() {
   return (
-    <div className="relative overflow-hidden bg-[#070b1a] pt-24 text-white">
-      <div className="ambient-orb absolute -left-32 top-16 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-      <div className="ambient-orb absolute -right-24 top-32 h-[30rem] w-[30rem] rounded-full bg-fuchsia-500/15 blur-3xl [animation-delay:-3s]" />
-      <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
-        <section className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
-          <div className="animate-rise">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200/15 bg-white/7 px-3 py-1.5 text-xs font-medium text-cyan-100 backdrop-blur"><Sparkles size={14} /> The intelligent way to wander</div>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.03] tracking-[-.055em] sm:text-7xl"><span className="gradient-text">Travel beyond</span><br />the ordinary plan.</h1>
-            <p className="mt-7 max-w-xl text-lg leading-8 text-slate-300">A private travel workspace for bright ideas, meaningful itineraries, and trips that feel as good to plan as they do to live.</p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link to="/register" className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3.5 font-semibold text-slate-950 transition duration-200 hover:-translate-y-1 hover:bg-cyan-100">Start planning free <ArrowRight size={18} className="transition group-hover:translate-x-1" /></Link>
-              <a href="#discover" className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3.5 font-semibold text-white transition hover:bg-white/10">Explore the experience</a>
+    <div className="bg-stone-50 text-slate-950">
+      <section className="relative min-h-[92vh] overflow-hidden bg-slate-950 text-white">
+        <img
+          src={destinationImage}
+          alt="Taj Mahal in Agra, India"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-950/65" />
+        <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-center px-5 pb-16 pt-28 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-100 backdrop-blur">
+              <MapPin size={14} />
+              Made only for India trips
             </div>
-            <div className="mt-10 flex items-center gap-3 text-sm text-slate-400"><div className="flex -space-x-2"><span className="h-7 w-7 rounded-full border-2 border-[#10172f] bg-cyan-300" /><span className="h-7 w-7 rounded-full border-2 border-[#10172f] bg-violet-400" /><span className="h-7 w-7 rounded-full border-2 border-[#10172f] bg-amber-300" /></div> Built for your next unforgettable escape</div>
+            <h1 className="text-4xl font-black leading-tight tracking-normal sm:text-6xl lg:text-7xl">
+              Plan smarter trips across India.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base font-medium leading-8 text-slate-100 sm:text-lg">
+              TravelAI helps Indian travellers build domestic itineraries, track budgets in rupees, split group expenses, and keep every trip detail in one calm dashboard.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-300 px-5 py-3.5 text-sm font-black text-slate-950 shadow-lg shadow-black/20 transition hover:bg-amber-200"
+              >
+                Start planning
+                <ArrowRight size={18} />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/15"
+              >
+                Sign in
+              </Link>
+            </div>
           </div>
-          <div className="animate-rise-delay relative mx-auto w-full max-w-md">
-            <div className="glass-panel relative overflow-hidden rounded-[2rem] p-4 shadow-2xl shadow-indigo-950/70">
-              <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-br from-cyan-300/35 via-indigo-500/20 to-fuchsia-400/25" />
-              <div className="relative overflow-hidden rounded-[1.45rem] bg-[#111932] p-5">
-                <div className="flex items-center justify-between"><span className="rounded-full bg-white/10 px-3 py-1 text-xs text-cyan-100">Curated escape</span><span className="text-xs text-slate-400">12–19 Oct</span></div>
-                <div className="mt-10"><p className="text-sm text-cyan-200">Your next chapter</p><h2 className="mt-1 text-4xl font-semibold tracking-tight">Kyoto, Japan</h2><p className="mt-2 text-sm text-slate-400">Seven days of temples, slow mornings, and autumn color.</p></div>
-                <div className="mt-8 grid grid-cols-3 gap-2"><div className="rounded-2xl bg-white/8 p-3"><MapPin size={16} className="text-cyan-300" /><p className="mt-3 text-xs text-slate-400">Stops</p><p className="font-semibold">14</p></div><div className="rounded-2xl bg-white/8 p-3"><CalendarDays size={16} className="text-fuchsia-300" /><p className="mt-3 text-xs text-slate-400">Days</p><p className="font-semibold">7</p></div><div className="rounded-2xl bg-white/8 p-3"><Compass size={16} className="text-amber-200" /><p className="mt-3 text-xs text-slate-400">Mood</p><p className="font-semibold">Slow</p></div></div>
+
+          <div className="mt-12 grid gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur md:grid-cols-4">
+            {routes.map((route) => (
+              <div key={route} className="flex items-center gap-2 rounded-xl bg-slate-950/35 px-3 py-3 text-sm font-bold text-slate-100">
+                <Compass size={16} className="text-amber-200" />
+                {route}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <main>
+        <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+          {benefits.map(({ icon: Icon, title, text }) => (
+            <article key={title} className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                <Icon size={21} />
+              </div>
+              <h2 className="mt-5 text-xl font-black text-slate-950">{title}</h2>
+              <p className="mt-3 text-sm font-medium leading-6 text-slate-600">{text}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="bg-white">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-emerald-700">Why it helps</p>
+              <h2 className="mt-3 text-3xl font-black tracking-normal text-slate-950 sm:text-4xl">
+                One workspace for the full Indian travel plan.
+              </h2>
+              <p className="mt-5 text-base font-medium leading-8 text-slate-600">
+                Use it for short family trips, college friend getaways, office outings, pilgrimages, hill station breaks, and city tours. Your dashboard keeps the real work together: itinerary, budget, wishlist, groups, and expenses.
+              </p>
+              <div className="mt-7 grid gap-3">
+                <div className="flex items-start gap-3">
+                  <IndianRupee className="mt-1 h-5 w-5 text-emerald-700" />
+                  <p className="font-bold text-slate-800">Track hotels, food, tickets, fuel, trains, cabs, and activity costs.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <TrainFront className="mt-1 h-5 w-5 text-emerald-700" />
+                  <p className="font-bold text-slate-800">Organize plans around Indian travel habits and domestic destinations.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <ShieldCheck className="mt-1 h-5 w-5 text-emerald-700" />
+                  <p className="font-bold text-slate-800">Login stays active after reloads, so mobile users can return without losing access.</p>
+                </div>
               </div>
             </div>
-            <div className="absolute -bottom-6 -left-8 glass-panel rounded-2xl px-4 py-3 text-sm text-slate-100"><span className="mr-2 text-cyan-300">✦</span> Itinerary ready to explore</div>
+
+            <div className="rounded-lg border border-slate-200 bg-stone-50 p-5">
+              <div className="rounded-lg bg-slate-950 p-5 text-white">
+                <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-wide text-amber-200">Sample trip</p>
+                    <h3 className="mt-1 text-2xl font-black">Jaipur family weekend</h3>
+                  </div>
+                  <CalendarDays className="h-8 w-8 text-amber-200" />
+                </div>
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <p className="text-xs font-bold text-slate-300">Budget</p>
+                    <p className="mt-2 text-xl font-black">Rs. 28,000</p>
+                  </div>
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <p className="text-xs font-bold text-slate-300">People</p>
+                    <p className="mt-2 text-xl font-black">5</p>
+                  </div>
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <p className="text-xs font-bold text-slate-300">Days</p>
+                    <p className="mt-2 text-xl font-black">3</p>
+                  </div>
+                </div>
+                <div className="mt-5 space-y-3">
+                  {["Amber Fort and old city plan", "Food and cab expenses split", "Wishlist saved for next Rajasthan trip"].map((item) => (
+                    <div key={item} className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3 text-sm font-bold">
+                      <CheckCircle2 size={18} className="text-emerald-300" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="discover" className="mt-28 scroll-mt-24">
-          <div className="mb-8 flex items-end justify-between gap-4"><div><p className="text-sm font-medium text-cyan-300">BUILT FOR THE WHOLE JOURNEY</p><h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Less logistics. More anticipation.</h2></div><p className="hidden max-w-xs text-sm leading-6 text-slate-400 sm:block">A calm, capable space that turns inspiration into a plan you can trust.</p></div>
-          <div className="grid gap-4 md:grid-cols-3">{features.map(({ icon: Icon, title, text }) => <article key={title} className="glass-panel rounded-3xl p-6 transition duration-200 hover:-translate-y-1 hover:bg-white/10"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-300 to-indigo-500 text-slate-950"><Icon size={20} /></div><h3 className="mt-7 text-xl font-semibold">{title}</h3><p className="mt-2 leading-6 text-slate-400">{text}</p></article>)}</div>
+        <section className="mx-auto max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-emerald-700">How it works</p>
+              <h2 className="mt-3 text-3xl font-black tracking-normal text-slate-950 sm:text-4xl">
+                From idea to dashboard in minutes.
+              </h2>
+            </div>
+            <div className="grid gap-4">
+              {steps.map((step, index) => (
+                <div key={step} className="flex gap-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-950 text-sm font-black text-white">
+                    {index + 1}
+                  </div>
+                  <p className="pt-1 text-base font-bold leading-7 text-slate-700">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
-        <section id="how-it-works" className="mt-24 rounded-[2rem] border border-white/10 bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/10 p-8 text-center sm:p-14"><p className="text-sm font-medium text-cyan-200">START WHERE YOU ARE</p><h2 className="mx-auto mt-3 max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl">Every extraordinary trip starts with one beautiful idea.</h2><Link to="/register" className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:-translate-y-1 hover:bg-cyan-100">Create your workspace <ArrowRight size={17} /></Link></section>
       </main>
     </div>
   );

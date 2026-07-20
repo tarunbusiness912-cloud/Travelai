@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { toAppUser } from '../services/authService';
 
 const AuthContext = createContext(null);
 
@@ -7,12 +9,35 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check local storage for persistent session
-    const storedUser = localStorage.getItem('travelai_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    let mounted = true;
+
+    const applySession = (session) => {
+      if (!mounted) return;
+
+      if (session?.user) {
+        const appUser = toAppUser(session.user, session);
+        setUser(appUser);
+        localStorage.setItem('travelai_user', JSON.stringify(appUser));
+      } else {
+        setUser(null);
+        localStorage.removeItem('travelai_user');
+      }
+    };
+
+    supabase.auth.getSession().then(({ data }) => {
+      applySession(data.session);
+      if (mounted) setLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session);
+      if (mounted) setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   const login = (userData) => {
@@ -20,7 +45,8 @@ export function AuthProvider({ children }) {
     localStorage.setItem('travelai_user', JSON.stringify(userData));
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     localStorage.removeItem('travelai_user');
   };

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { LogIn, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { loginUser } from '../services/authService';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   
   const [email, setEmail] = useState('');
@@ -24,15 +25,12 @@ export default function Login() {
     setError('');
 
     try {
-      // Direct axios call pointing to your backend endpoint
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      
-      // Store user metadata and session token inside global Auth state
-      login(response.data);
-      navigate('/dashboard');
+      const { user } = await loginUser(email, password);
+      login(user);
+      navigate(location.state?.from?.pathname || '/dashboard', { replace: true });
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Invalid email credentials or password');
+      setError(err.message || 'Invalid email credentials or password');
     } finally {
       setLoading(false);
     }
@@ -55,6 +53,12 @@ export default function Login() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 border border-slate-100 shadow-sm sm:rounded-2xl sm:px-10 space-y-6">
           
+          {location.state?.message && !error && (
+            <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-800 text-sm font-semibold">
+              {location.state.message}
+            </div>
+          )}
+
           {error && (
             <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-sm font-semibold">
               {error}

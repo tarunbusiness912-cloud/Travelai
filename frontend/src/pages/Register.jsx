@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, User, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { registerUser } from '../services/authService';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -25,14 +25,21 @@ export default function Register() {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
-      
-      // Auto-log user in upon registration success
-      login(response.data);
-      navigate('/dashboard');
+      const { user, session } = await registerUser(name, email, password);
+
+      if (session && user) {
+        login(user);
+        navigate('/dashboard');
+        return;
+      }
+
+      navigate('/login', {
+        replace: true,
+        state: { message: 'Account created. Please check your email once, then sign in.' },
+      });
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.message || 'Account registration failed. Please try again.');
+      setError(err.message || 'Account registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
